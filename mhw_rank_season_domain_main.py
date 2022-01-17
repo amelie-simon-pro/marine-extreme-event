@@ -6,6 +6,7 @@ START = datetime.now()
 
 # ccart
 # PATH
+# path
 pathdata = "/home/ajsimon/Documents/DATA"
 pathoutputfig = "/home/ajsimon/Documents/POSTDOC_IDL/PROJETS/PLOT/MHW/FIGURE_RAW"
 pathoutputlatex = "/home/ajsimon/Documents/POSTDOC_IDL/PROJETS/PLOT/MHW/LATEX"
