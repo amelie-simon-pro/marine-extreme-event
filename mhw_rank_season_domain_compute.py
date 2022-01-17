@@ -13,7 +13,6 @@ def compute(**kargs):
     print(kargs)
     pathdata = kargs["pathdata"]
     pathoutputfig = kargs["pathoutputfig"]
-    pathoutputlatex = kargs["pathoutputlatex"]
     region = kargs["region"]
     target = kargs["target"]
     season = kargs["season"]
@@ -23,7 +22,6 @@ def compute(**kargs):
     clim_type = kargs["clim_type"]
     yearbegclim = kargs["yearbegclim"]
     yearendclim = kargs["yearendclim"]
-    criteria = kargs["criteria"]
     opeevents = kargs["opeevents"]
     npy = kargs["npy"]
     plot = kargs["plot"]
@@ -46,9 +44,7 @@ def compute(**kargs):
     region1 = kargs["region1"]
     region2 = kargs["region2"]
     index_lat = kargs["index_lat"]
-    fileout = kargs["fileout"]
     nbyear = kargs["nbyear"]
-    opeevents_name = str(np.nanmean)
     # for i in range(1, len(sys.argv)):
     #   print(sys.argv[i])
     print("ft_tick",ft_tick)
@@ -107,10 +103,9 @@ def compute(**kargs):
         f'{pathdata}/MHW/NPY.DETECT/{model}.clim-{target}.{yearbeg}{yearend}{dayendfilename}.clim{clim_type}.{yearbegclim}{yearendclim}{dayendfilename}.{resolution}.{region2}.npy',
         allow_pickle=True).item()
 
-    # for year in range(yearbeg,yearend+1):
-    for year in [2003]:
+    for year in range(yearbeg,yearend+1):
+    #for year in [2003]:
         if season == 'DJFM':
-            print("HELLO DJFM")
             year1 = year - 1
             month_beg = 12
             day_beg = 1
@@ -118,7 +113,6 @@ def compute(**kargs):
             month_end = 3
             day_end = 31
         elif season == 'JJAS':
-            print("HELLO JJAS")
             year1 = year
             month_beg = 6
             day_beg = 1
@@ -148,7 +142,7 @@ def compute(**kargs):
         for i in range(lon.shape[0]):
             for j in range(lat_half.shape[0]):
                 if ((lonmin <= lon[i] <= lonmax) and (latmin <= lat[j] <= latmax)):
-                    if ((mask_seas[j, i] == 17)):
+                    if ((mask_seas[j, i] == subseas)):
                         area_subseas_total[year - yearbeg] = area_subseas_total[year - yearbeg] + cell_area[j, i]
                         pos_r1 = (i, j)
                         if pos_r1 in mhw_r1.keys():
@@ -310,7 +304,7 @@ def compute(**kargs):
                 else:
                     cmap = plt.cm.Greys
                 plt.contourf(lon, lat, nevents, levels=levels, cmap=cmap, extend='both')
-                cb = plt.colorbar(ax=ax, orientation="vertical", shrink=shrink)
+                cb = plt.colorbar(ax=ax, orientation=legend_orientation, shrink=shrink)
                 cb.set_label("Nb of events (-)", fontsize=ft_label)
             if properties == "frequency":
                 levels = np.linspace(0, 2, 9)
@@ -319,7 +313,7 @@ def compute(**kargs):
                 else:
                     cmap = plt.cm.Reds
                 plt.contourf(lon, lat, frequency, levels=levels, cmap=cmap, extend='both')
-                cb = plt.colorbar(ax=ax, orientation="vertical", shrink=shrink)
+                cb = plt.colorbar(ax=ax, orientation=legend_orientation, shrink=shrink)
                 cb.set_label("Frequency (Number events/months)", fontsize=ft_label)
             if properties == "duration":
                 levels = np.linspace(0, 20, 8)
@@ -328,7 +322,7 @@ def compute(**kargs):
                 else:
                     cmap = plt.cm.Purples
                 plt.contourf(lon, lat, duration, levels=levels, cmap=cmap, extend='both')
-                cb = plt.colorbar(ax=ax, orientation="vertical", shrink=shrink)
+                cb = plt.colorbar(ax=ax, orientation=legend_orientation, shrink=shrink)
                 cb.set_label("Duration (days)", fontsize=ft_label)
             if properties == "intensity_mean":
                 if target == 'MCS':
@@ -338,7 +332,7 @@ def compute(**kargs):
                     levels = np.linspace(0, 2, 7)
                     cmap = plt.cm.Greens
                 plt.contourf(lon, lat, intensity_mean, cmap=cmap, extend='both')
-                cb = plt.colorbar(ax=ax, orientation="vertical", shrink=shrink)
+                cb = plt.colorbar(ax=ax, orientation=legend_orientation, shrink=shrink)
                 cb.set_label("Mean int. (°C)", fontsize=ft_label)
             if properties == "intensity_max":
                 if 'target' == 'MCS':
@@ -348,7 +342,7 @@ def compute(**kargs):
                     levels = np.linspace(0, 4, 9)
                     cmap = plt.cm.turbo
                 plt.contourf(lon, lat, intensity_max, levels=levels, cmap=cmap, extend='both')
-                cb = plt.colorbar(ax=ax, orientation="vertical", shrink=shrink)
+                cb = plt.colorbar(ax=ax, orientation=legend_orientation, shrink=shrink)
                 cb.set_label("Maximum Int. (degC)", fontsize=ft_label)
             if properties == "intensity_cumulative":
                 criteria_witharea = np.ma.masked_where(criteria_witharea == 0, criteria_witharea)
@@ -363,19 +357,19 @@ def compute(**kargs):
                 plt.contourf(lon, lat, criteria_witharea / 10 ** (9), levels=levels, cmap=cmap,
                              extend='both')
                 cmap.set_bad(color='white')
-                cb = plt.colorbar(ax=ax, orientation="vertical", shrink=shrink)
-                cb.set_label("Cum. Int. x area (degCxdaysx10³km²)", fontsize=ft_label)
+                cb = plt.colorbar(ax=ax, orientation=legend_orientation, shrink=shrink)
+                cb.set_label("Activity (degCxdaysx10³km²)", fontsize=ft_label)
             if properties == "intensity_var":
                 levels = np.linspace(0, 1, 5)
                 plt.contourf(lon, lat, intensity_var, levels=levels, cmap=cmap, extend='both')
-                cb = plt.colorbar(ax=ax, orientation="vertical", shrink=shrink)
+                cb = plt.colorbar(ax=ax, orientation=legend_orientation, shrink=shrink)
                 cb.set_label("Intensity variability (degC)", fontsize=ft_label)
 
             cb.ax.tick_params(labelsize=16)
             # plt.title(f'{model} - {year}-{season} ', loc='center',fontsize=24)
             plt.title(f'{year}-{season} ', loc='center', fontsize=ft_title)
             plt.savefig(
-                f'{pathoutputfig}/{target}_{opeevents}-{properties}-area_map_{model}_{year}-{season}_{subregion}.eps',
+                f'{pathoutputfig}/{target}_{opeevents}-{properties}-area_map_{model}_{year}-{season}_{subregion}_{legend_orientation}.eps',
                 format='eps')
 
     print("step: end loop")
@@ -385,14 +379,14 @@ def compute(**kargs):
     if re.search(r'y\b', rank):
         print("step: find top years")
 
-        if '{target}' == 'MHW':
+        if target == 'MHW':
             criteria_domain_rankyear = np.argsort(criteria_domain * -1) + yearbeg
         else:
             criteria_domain_rankyear = np.argsort(criteria_domain) + yearbeg
         print(criteria_domain_rankyear)
 
         np.savetxt(
-            f'{pathdata}/MHW/TXT.RANK/rank.{model}.{target}.{season}.{resolution}.{subregion}.{opeevents}.{criteria}.area.txt',
+            f'{pathdata}/MHW/TXT.RANK/rank.{model}.{target}.{season}.{resolution}.{subregion}.{opeevents}.{properties}.area.txt',
             criteria_domain_rankyear, fmt='%d')
 
     del mhw_r1

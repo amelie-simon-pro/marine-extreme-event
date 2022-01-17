@@ -15,8 +15,8 @@ pathoutputlatex = "/home/ajsimon/Documents/POSTDOC_IDL/PROJETS/PLOT/MHW/LATEX"
 region = "48W38E-20N60N"  # for file input
 # subregion=NA #48W0E-40N60N #NA #48W0E-40N60N # 48W38E-20N60N / 48W0E-20N40N / 48W0E-40N60N / 0W38E-20N60N
 # model=era5-sst  #era5-sst oisst ostia
-target = "MHW"  # MHW (heatwaves) / MCW (coldspells)
-season = "JJAS"  # DJFM #JJAS
+target = "MCS"  # MHW (heatwaves) / MCW (coldspells)
+season = "DJFM"  # DJFM #JJAS
 yearbeg = 1982
 yearend = 2021
 dayendfilename = "1123"
@@ -24,18 +24,14 @@ clim_type = "day.mean"  # ydaymean=climato, ts=day.mean
 yearbegclim = "1982"
 yearendclim = "2021"  # for 2020 ends 30 of June
 nmonths = "4"  # for frequency
-criteria = "intensity_cumulative"  # intensity_mean intensity_max intensity_cumulative intensity_var duration (frequency, nevents not coded for ranking)
 opeevents = "sum"  # MARCHE PAS VERSION 9# max=rank event; sum=rank period
 python = "y"  # y/n
-npy = "n"  # ts activity
+npy = "y"  # ts activity
 plot = "map"  # /n/map/ts
-rank = "n"
+rank = "y"
 latex = "n"  # top4-9year-1region #top3year-1region #top3year-1region #top4-9year-1region # #top3year-1region #top3year-1region
+properties="intensity_cumulative"
 # top3year-3regions # top5years-3products #topyear #allyear # y/n
-# lonmin_plot=-40
-# lonmax_plot=10
-# latmin_plot=20
-# latmax_plot=60
 # END CHOICE
 
 if region == "48W38E-20N60N":
@@ -50,7 +46,6 @@ for model in ["oisst"]:  # oisst era5-sst ostia
         var = "sst"
         resolution = "1440x720"
     elif model == "ostia":
-        modelfullname = "METOFFICE.OSTIA"
         var = "analysed_sst"
         resolution = "1440x720"
     elif model == "era5-sst":
@@ -58,20 +53,13 @@ for model in ["oisst"]:  # oisst era5-sst ostia
         resolution = "1440x720"
         model = "era5"
 
-    for subregion in ["MedW2"]:  # MedE MedW Med NA 30W0W-30N50N
-        if subregion == "30W0W-30N50N":
-            lonmin = -30
-            lonmax = 0
-            latmin = 30
-            latmax = 50
-            subseas = 1
-        elif subregion == "Med":
+    for subregion in ["10W0W-43N50N", '30W0W-30N50N']:
+        if subregion == "Med":
             lonmin = -7
             lonmax = 37
             latmin = 30
             latmax = 46
             subseas = 4
-            figsize = "8,5"
             shrink = 1
             ft_title = 24
             ft_label = 16
@@ -84,7 +72,6 @@ for model in ["oisst"]:  # oisst era5-sst ostia
             latmin = 34
             latmax = 46
             subseas = 17
-            figsize = "8,5"
             ft_title = 16
             shrink = 0.65
             ft_label = 16
@@ -97,14 +84,36 @@ for model in ["oisst"]:  # oisst era5-sst ostia
             latmin = 29
             latmax = 47
             subseas = 16
-            figsize = "8,5"
             shrink = 0.65
             ft_title = 16
             ft_label = 16
             ft_tick = 16
             scale = 0.34
             legend_orientation = "horizontal"
-            area = "1.60374412e+12"
+        elif subregion == "30W0W-30N50N":
+            lonmin = -30
+            lonmax = 0
+            latmin = 30
+            latmax = 50
+            subseas = 1
+            shrink = 0.65
+            ft_title = 16
+            ft_label = 16
+            ft_tick = 16
+            scale = 0.34
+            legend_orientation = "horizontal"
+        elif subregion == "10W0W-43N50N":
+            lonmin = -10
+            lonmax = 0
+            latmin = 43
+            latmax = 50
+            subseas = 1
+            shrink = 0.65
+            ft_title = 16
+            ft_label = 16
+            ft_tick = 16
+            scale = 0.34
+            legend_orientation = "horizontal"
 
         for properties in ["intensity_cumulative"]:  # for plot map nevents  duration intensity_mean
             trim = "40 110 70 120"
@@ -126,15 +135,14 @@ for model in ["oisst"]:  # oisst era5-sst ostia
             print(f'{model}')
             print(f'{region}')
             print(f'{subregion}')
-            print(f'{criteria}')
             print(f'{season}')
-            fileout = pathoutputlatex + "/rank_" + model + "_" + target + "_" + season + "_" + subregion + "_" + opeevents + "_" + criteria + "_area_" + yearbegclim + yearendclim + dayendfilename + "_v8.pdf"
+            fileout = pathoutputlatex + "/rank_" + model + "_" + target + "_" + season + "_" + subregion + "_" + opeevents + "_" + properties+ "_area_" + yearbegclim + yearendclim + dayendfilename + "_v8.pdf"
             nbyear = yearend - yearbeg + 1
             print(f'nbyear {nbyear}')
 
             if python == "y":
                 compute(
-                    pathdata=pathdata, pathoutputfig=pathoutputfig, pathoutputlatex=pathoutputlatex,
+                    pathdata=pathdata, pathoutputfig=pathoutputfig,
                     region=region,
                     target=target,
                     season=season,
@@ -143,7 +151,6 @@ for model in ["oisst"]:  # oisst era5-sst ostia
                     clim_type=clim_type,
                     yearbegclim=yearbegclim, yearendclim=yearendclim,
                     nmonths=nmonths,
-                    criteria=criteria,
                     opeevents=opeevents,
                     python=python,
                     npy=npy,
@@ -162,7 +169,6 @@ for model in ["oisst"]:  # oisst era5-sst ostia
                     legend_orientation=legend_orientation,
                     region1=region1, region2=region2,
                     index_lat=index_lat,
-                    fileout=fileout,
                     nbyear=nbyear)
 
 #######
@@ -228,14 +234,14 @@ eod
                    )
 
     with open(
-            pathdata + "/MHW/TXT.RANK/rank." + model + "." + target + "." + season + "." + resolution + "." + subregion + "." + opeevents + "." + criteria + ".area.txt") as f:
+            pathdata + "/MHW/TXT.RANK/rank." + model + "." + target + "." + season + "." + resolution + "." + subregion + "." + opeevents + "." + properties+ ".area.txt") as f:
         for year in f:
             with open("tmp_rank_v8.tex", "w") as file:
                 file.write(r'''
 \newpage 
 \begin{figure}[p]
  \begin{center}
-\noindent\includegraphics[scale=''' + scale + r''', trim=''' + trim + r''', clip=true]{''' + pathoutputfig + "/" + target + "_" + opeevents + "-" + criteria + "-area_map_" + model + "_" + year + "-" + season + "_" + subregion + r'''.eps} 
+\noindent\includegraphics[scale=''' + scale + r''', trim=''' + trim + r''', clip=true]{''' + pathoutputfig + "/" + target + "_" + opeevents + "-" + properties+ "-area_map_" + model + "_" + year + "-" + season + "_" + subregion + r'''.eps} 
  \end{center}
 \end{figure}
 
@@ -255,10 +261,10 @@ eod''')
     # done #criteria
 
     if latex == "top5year-3products":
-        fileout = pathoutputlatex + "/rank_top5year_3products_" + target + "_" + season + "_" + subregion + "_" + opeevents + "_" + criteria + "_area_" + yearbegclim + yearendclim + dayendfilename + "_v8.pdf"
+        fileout = pathoutputlatex + "/rank_top5year_3products_" + target + "_" + season + "_" + subregion + "_" + opeevents + "_" + properties+ "_area_" + yearbegclim + yearendclim + dayendfilename + "_v8.pdf"
         era5_year = []
         with open(
-                pathdata + "/MHW/TXT.RANK/rank.era5." + target + "." + season + "." + resolution + "." + subregion + "." + opeevents + "." + criteria + "." + ".area.txt") as f:
+                pathdata + "/MHW/TXT.RANK/rank.era5." + target + "." + season + "." + resolution + "." + subregion + "." + opeevents + "." + properties+ "." + ".area.txt") as f:
             for line in f:
                 print(f'', line.strip())
                 era5_year.append(line.strip())
@@ -266,14 +272,14 @@ eod''')
         oisst_year = []
 
         with open(
-                pathdata + "/MHW/TXT.RANK/rank.oisst." + target + "." + season + "." + resolution + "." + subregion + "." + opeevents + "." + criteria + ".area.txt") as f:
+                pathdata + "/MHW/TXT.RANK/rank.oisst." + target + "." + season + "." + resolution + "." + subregion + "." + opeevents + "." + properties+ ".area.txt") as f:
             for line in f:
                 print(f'', line.strip())
                 oisst_year.append(line.strip())
 
         ostia_year = []
         with open(
-                pathdata + "/MHW/TXT.RANK/rank.ostia." + target + "." + season + "." + resolution + "." + subregion + "." + opeevents + "." + criteria + ".area.txt") as f:
+                pathdata + "/MHW/TXT.RANK/rank.ostia." + target + "." + season + "." + resolution + "." + subregion + "." + opeevents + "." + properties+ ".area.txt") as f:
             for line in f:
                 print(f'', line.strip())
                 ostia_year.append(line.strip())
@@ -338,39 +344,39 @@ eod
 \newpage 
 \begin{figure}[p]
  \begin{center}
-\noindent\includegraphics[scale=''' + scale + r''', trim=''' + trim1a + r''', clip=true]{''' + pathoutputfig + r'''/''' + target + r'''_''' + opeevents + r'''-''' + criteria + r'''-area_map_oisst_''' +
+\noindent\includegraphics[scale=''' + scale + r''', trim=''' + trim1a + r''', clip=true]{''' + pathoutputfig + r'''/''' + target + r'''_''' + opeevents + r'''-''' + properties+ r'''-area_map_oisst_''' +
                        oisst_year[0] + r'''-''' + season + r'''_''' + subregion + r'''.eps}
-\noindent\includegraphics[scale=''' + scale + r''', trim=''' + trim2a + r''', clip=true]{''' + pathoutputfig + r'''/''' + target + r'''_''' + opeevents + r'''-''' + criteria + r'''-area_map_ostia_''' +
+\noindent\includegraphics[scale=''' + scale + r''', trim=''' + trim2a + r''', clip=true]{''' + pathoutputfig + r'''/''' + target + r'''_''' + opeevents + r'''-''' + properties+ r'''-area_map_ostia_''' +
                        ostia_year[0] + r'''-''' + season + r'''_''' + subregion + r'''.eps}
-\noindent\includegraphics[scale=''' + scale + r''', trim=''' + trim3a + r''', clip=true]{''' + pathoutputfig + r'''/''' + target + r'''_''' + opeevents + r'''-''' + criteria + r'''-area_map_era5_''' +
+\noindent\includegraphics[scale=''' + scale + r''', trim=''' + trim3a + r''', clip=true]{''' + pathoutputfig + r'''/''' + target + r'''_''' + opeevents + r'''-''' + properties+ r'''-area_map_era5_''' +
                        era5_year[0] + r'''-''' + season + r'''_''' + subregion + r'''.eps}
 %
-\noindent\includegraphics[scale=''' + scale + r''', trim=''' + trim1b + r''', clip=true]{''' + pathoutputfig + r'''/''' + target + r'''_''' + opeevents + r'''-''' + criteria + r'''-area_map_oisst_''' +
+\noindent\includegraphics[scale=''' + scale + r''', trim=''' + trim1b + r''', clip=true]{''' + pathoutputfig + r'''/''' + target + r'''_''' + opeevents + r'''-''' + properties+ r'''-area_map_oisst_''' +
                        oisst_year[1] + r'''-''' + season + r'''_''' + subregion + r'''.eps}
-\noindent\includegraphics[scale=''' + scale + r''', trim=''' + trim2b + r''', clip=true]{''' + pathoutputfig + r'''/''' + target + r'''_''' + opeevents + r'''-''' + criteria + r'''-area_map_ostia_''' +
+\noindent\includegraphics[scale=''' + scale + r''', trim=''' + trim2b + r''', clip=true]{''' + pathoutputfig + r'''/''' + target + r'''_''' + opeevents + r'''-''' + properties+ r'''-area_map_ostia_''' +
                        ostia_year[1] + r'''-''' + season + r'''_''' + subregion + r'''.eps}
-\noindent\includegraphics[scale=''' + scale + r''', trim=''' + trim3b + r''', clip=true]{''' + pathoutputfig + r'''/''' + target + r'''_''' + opeevents + r'''-''' + criteria + r'''-area_map_era5_''' +
+\noindent\includegraphics[scale=''' + scale + r''', trim=''' + trim3b + r''', clip=true]{''' + pathoutputfig + r'''/''' + target + r'''_''' + opeevents + r'''-''' + properties+ r'''-area_map_era5_''' +
                        era5_year[1] + r'''-''' + season + r'''_''' + subregion + r'''.eps}
 %
-\noindent\includegraphics[scale=''' + scale + r''', trim=''' + trim1b + r''', clip=true]{''' + pathoutputfig + r'''/''' + target + r'''_''' + opeevents + r'''-''' + criteria + r'''-area_map_oisst_''' +
+\noindent\includegraphics[scale=''' + scale + r''', trim=''' + trim1b + r''', clip=true]{''' + pathoutputfig + r'''/''' + target + r'''_''' + opeevents + r'''-''' + properties+ r'''-area_map_oisst_''' +
                        oisst_year[2] + r'''-''' + season + r'''_''' + subregion + r'''.eps}
-\noindent\includegraphics[scale=''' + scale + r''', trim=''' + trim2b + r''', clip=true]{''' + pathoutputfig + r'''/''' + target + r'''_''' + opeevents + r'''-''' + criteria + r'''-area_map_ostia_''' +
+\noindent\includegraphics[scale=''' + scale + r''', trim=''' + trim2b + r''', clip=true]{''' + pathoutputfig + r'''/''' + target + r'''_''' + opeevents + r'''-''' + properties+ r'''-area_map_ostia_''' +
                        ostia_year[2] + r'''-''' + season + r'''_''' + subregion + r'''.eps}
-\noindent\includegraphics[scale=''' + scale + r''', trim=''' + trim3b + r''', clip=true]{''' + pathoutputfig + r'''/''' + target + r'''_''' + opeevents + r'''-''' + criteria + r'''-area_map_era5_''' +
+\noindent\includegraphics[scale=''' + scale + r''', trim=''' + trim3b + r''', clip=true]{''' + pathoutputfig + r'''/''' + target + r'''_''' + opeevents + r'''-''' + properties+ r'''-area_map_era5_''' +
                        era5_year[2] + r'''-''' + season + r'''_''' + subregion + r'''.eps}
 %
-\noindent\includegraphics[scale=''' + scale + r''', trim=''' + trim1b + r''', clip=true]{''' + pathoutputfig + r'''/''' + target + r'''_''' + opeevents + r'''-''' + criteria + r'''-area_map_oisst_''' +
+\noindent\includegraphics[scale=''' + scale + r''', trim=''' + trim1b + r''', clip=true]{''' + pathoutputfig + r'''/''' + target + r'''_''' + opeevents + r'''-''' + properties+ r'''-area_map_oisst_''' +
                        oisst_year[3] + r'''-''' + season + r'''_''' + subregion + r'''.eps}
-\noindent\includegraphics[scale=''' + scale + r''', trim=''' + trim2b + r''', clip=true]{''' + pathoutputfig + r'''/''' + target + r'''_''' + opeevents + r'''-''' + criteria + r'''-area_map_ostia_''' +
+\noindent\includegraphics[scale=''' + scale + r''', trim=''' + trim2b + r''', clip=true]{''' + pathoutputfig + r'''/''' + target + r'''_''' + opeevents + r'''-''' + properties+ r'''-area_map_ostia_''' +
                        ostia_year[3] + r'''-''' + season + r'''_''' + subregion + r'''.eps}
-\noindent\includegraphics[scale=''' + scale + r''', trim=''' + trim3b + r''', clip=true]{''' + pathoutputfig + r'''/''' + target + r'''_''' + opeevents + r'''-''' + criteria + r'''-area_map_era5_''' +
+\noindent\includegraphics[scale=''' + scale + r''', trim=''' + trim3b + r''', clip=true]{''' + pathoutputfig + r'''/''' + target + r'''_''' + opeevents + r'''-''' + properties+ r'''-area_map_era5_''' +
                        era5_year[3] + r'''-''' + season + r'''_''' + subregion + r'''.eps}
 %
-\noindent\includegraphics[scale=''' + scale + r''', trim=''' + trim1c + r''', clip=true]{''' + pathoutputfig + r'''/''' + target + r'''_''' + opeevents + r'''-''' + criteria + r'''-area_map_oisst_''' +
+\noindent\includegraphics[scale=''' + scale + r''', trim=''' + trim1c + r''', clip=true]{''' + pathoutputfig + r'''/''' + target + r'''_''' + opeevents + r'''-''' + properties+ r'''-area_map_oisst_''' +
                        oisst_year[4] + r'''-''' + season + r'''_''' + subregion + r'''.eps}
-\noindent\includegraphics[scale=''' + scale + r''', trim=''' + trim2c + r''', clip=true]{''' + pathoutputfig + r'''/''' + target + r'''_''' + opeevents + r'''-''' + criteria + r'''-area_map_ostia_''' +
+\noindent\includegraphics[scale=''' + scale + r''', trim=''' + trim2c + r''', clip=true]{''' + pathoutputfig + r'''/''' + target + r'''_''' + opeevents + r'''-''' + properties+ r'''-area_map_ostia_''' +
                        ostia_year[4] + r'''-''' + season + r'''_''' + subregion + r'''.eps}
-\noindent\includegraphics[scale=''' + scale + r''', trim=''' + trim3c + r''', clip=true]{''' + pathoutputfig + r'''/''' + target + r'''_''' + opeevents + r'''-''' + criteria + r'''-area_map_era5_''' +
+\noindent\includegraphics[scale=''' + scale + r''', trim=''' + trim3c + r''', clip=true]{''' + pathoutputfig + r'''/''' + target + r'''_''' + opeevents + r'''-''' + properties+ r'''-area_map_era5_''' +
                        era5_year[4] + r'''-''' + season + r'''_''' + subregion + r'''.eps}
  \end{center}
 \end{figure}
@@ -389,7 +395,7 @@ eod'''
     print(f'{fileout}')
 
     if latex == "top5year-3regions":
-        fileout = pathoutputlatex + "/rank_top5year_" + model + "_" + target + "_" + season + "_" + subregion + "_" + opeevents + "_" + criteria + "_area_" + yearbegclim + yearendclim + dayendfilename + "_v8.pdf"
+        fileout = pathoutputlatex + "/rank_top5year_" + model + "_" + target + "_" + season + "_" + subregion + "_" + opeevents + "_" + properties+ "_area_" + yearbegclim + yearendclim + dayendfilename + "_v8.pdf"
 
         if subregion == "Med":
             subregion1 = "Med"
@@ -398,21 +404,21 @@ eod'''
 
         region1_year = []
         with open(
-                pathdata + "/MHW/TXT.RANK/rank." + model + "." + target + "." + season + "." + resolution + "." + subregion1 + "." + opeevents + "." + criteria + ".area.txt") as f:
+                pathdata + "/MHW/TXT.RANK/rank." + model + "." + target + "." + season + "." + resolution + "." + subregion1 + "." + opeevents + "." + properties+ ".area.txt") as f:
             for line in f:
                 print(f'', line.strip())
                 region1_year.append(line.strip())
 
         region2_year = []
         with open(
-                pathdata + "/MHW/TXT.RANK/rank." + model + "." + target + "." + season + "." + resolution + "." + subregion2 + "." + opeevents + "." + criteria + ".area.txt") as f:
+                pathdata + "/MHW/TXT.RANK/rank." + model + "." + target + "." + season + "." + resolution + "." + subregion2 + "." + opeevents + "." + properties+ ".area.txt") as f:
             for line in f:
                 print(f'', line.strip())
                 region2_year.append(line.strip())
 
         region3_year = []
         with open(
-                pathdata + "/MHW/TXT.RANK/rank." + model + "." + target + "." + season + "." + resolution + "." + subregion3 + "." + opeevents + "." + criteria + ".area.txt") as f:
+                pathdata + "/MHW/TXT.RANK/rank." + model + "." + target + "." + season + "." + resolution + "." + subregion3 + "." + opeevents + "." + properties+ ".area.txt") as f:
             for line in f:
                 print(f'', line.strip())
                 region3_year.append(line.strip())
@@ -473,39 +479,39 @@ eod'''
 \newpage 
 \begin{figure}[p]
  \begin{center}
-\noindent\includegraphics[scale=''' + scale + r''', trim=''' + trim1a + r''', clip=true]{''' + pathoutputfig + r'''/''' + target + r'''_''' + opeevents + r'''-''' + criteria + r'''-area_map_''' + model + r'''_''' +
+\noindent\includegraphics[scale=''' + scale + r''', trim=''' + trim1a + r''', clip=true]{''' + pathoutputfig + r'''/''' + target + r'''_''' + opeevents + r'''-''' + properties+ r'''-area_map_''' + model + r'''_''' +
                        region1_year[0] + r'''-''' + season + r'''_''' + subregion1 + r'''.eps} 
-\noindent\includegraphics[scale=''' + scale + r''', trim=''' + trim2a + r''', clip=true]{''' + pathoutputfig + r'''/''' + target + r'''_''' + opeevents + r'''-''' + criteria + r'''-area_map_''' + model + r'''_''' +
+\noindent\includegraphics[scale=''' + scale + r''', trim=''' + trim2a + r''', clip=true]{''' + pathoutputfig + r'''/''' + target + r'''_''' + opeevents + r'''-''' + properties+ r'''-area_map_''' + model + r'''_''' +
                        region2_year[0] + r'''-''' + season + r'''_''' + subregion2 + r'''.eps} 
-\noindent\includegraphics[scale=''' + scale + r''', trim=''' + trim3a + r''', clip=true]{''' + pathoutputfig + r'''/''' + target + r'''_''' + opeevents + r'''-''' + criteria + r'''-area_map_''' + model + r'''_''' +
+\noindent\includegraphics[scale=''' + scale + r''', trim=''' + trim3a + r''', clip=true]{''' + pathoutputfig + r'''/''' + target + r'''_''' + opeevents + r'''-''' + properties+ r'''-area_map_''' + model + r'''_''' +
                        region3_year[0] + r'''-''' + season + r'''_''' + subregion3 + r'''.eps} 
 %
-\noindent\includegraphics[scale=''' + scale + r''', trim=''' + trim1b + r''', clip=true]{''' + pathoutputfig + r'''/''' + target + r'''_''' + opeevents + r'''-''' + criteria + r'''-area_map_''' + model + r'''_''' +
+\noindent\includegraphics[scale=''' + scale + r''', trim=''' + trim1b + r''', clip=true]{''' + pathoutputfig + r'''/''' + target + r'''_''' + opeevents + r'''-''' + properties+ r'''-area_map_''' + model + r'''_''' +
                        region1_year[1] + r'''-''' + season + r'''_''' + subregion1 + r'''.eps} 
-\noindent\includegraphics[scale=''' + scale + r''', trim=''' + trim2b + r''', clip=true]{''' + pathoutputfig + r'''/''' + target + r'''_''' + opeevents + r'''-''' + criteria + r'''-area_map_''' + model + r'''_''' +
+\noindent\includegraphics[scale=''' + scale + r''', trim=''' + trim2b + r''', clip=true]{''' + pathoutputfig + r'''/''' + target + r'''_''' + opeevents + r'''-''' + properties+ r'''-area_map_''' + model + r'''_''' +
                        region2_year[1] + r'''-''' + season + r'''_''' + subregion2 + r'''.eps} 
-\noindent\includegraphics[scale=''' + scale + r''', trim=''' + trim3b + r''', clip=true]{''' + pathoutputfig + r'''/''' + target + r'''_''' + opeevents + r'''-''' + criteria + r'''-area_map_''' + model + r'''_''' +
+\noindent\includegraphics[scale=''' + scale + r''', trim=''' + trim3b + r''', clip=true]{''' + pathoutputfig + r'''/''' + target + r'''_''' + opeevents + r'''-''' + properties+ r'''-area_map_''' + model + r'''_''' +
                        region3_year[1] + r'''-''' + season + r'''_''' + subregion3 + r'''.eps} 
 %
-\noindent\includegraphics[scale=''' + scale + r''', trim=''' + trim1b + r''', clip=true]{''' + pathoutputfig + r'''/''' + target + r'''_''' + opeevents + r'''-''' + criteria + r'''-area_map_''' + model + r'''_''' +
+\noindent\includegraphics[scale=''' + scale + r''', trim=''' + trim1b + r''', clip=true]{''' + pathoutputfig + r'''/''' + target + r'''_''' + opeevents + r'''-''' + properties+ r'''-area_map_''' + model + r'''_''' +
                        region1_year[2] + r'''-''' + season + r'''_''' + subregion1 + r'''.eps} 
-\noindent\includegraphics[scale=''' + scale + r''', trim=''' + trim2b + r''', clip=true]{''' + pathoutputfig + r'''/''' + target + r'''_''' + opeevents + r'''-''' + criteria + r'''-area_map_''' + model + r'''_''' +
+\noindent\includegraphics[scale=''' + scale + r''', trim=''' + trim2b + r''', clip=true]{''' + pathoutputfig + r'''/''' + target + r'''_''' + opeevents + r'''-''' + properties+ r'''-area_map_''' + model + r'''_''' +
                        region2_year[2] + r'''-''' + season + r'''_''' + subregion2 + r'''.eps} 
-\noindent\includegraphics[scale=''' + scale + r''', trim=''' + trim3b + r''', clip=true]{''' + pathoutputfig + r'''/''' + target + r'''_''' + opeevents + r'''-''' + criteria + r'''-area_map_''' + model + r'''_''' +
+\noindent\includegraphics[scale=''' + scale + r''', trim=''' + trim3b + r''', clip=true]{''' + pathoutputfig + r'''/''' + target + r'''_''' + opeevents + r'''-''' + properties+ r'''-area_map_''' + model + r'''_''' +
                        region3_year[2] + r'''-''' + season + r'''_''' + subregion3 + r'''.eps} 
 %
-\noindent\includegraphics[scale=''' + scale + r''', trim=''' + trim1b + r''', clip=true]{''' + pathoutputfig + r'''/''' + target + r'''_''' + opeevents + r'''-''' + criteria + r'''-area_map_''' + model + r'''_''' +
+\noindent\includegraphics[scale=''' + scale + r''', trim=''' + trim1b + r''', clip=true]{''' + pathoutputfig + r'''/''' + target + r'''_''' + opeevents + r'''-''' + properties+ r'''-area_map_''' + model + r'''_''' +
                        region1_year[3] + r'''-''' + season + r'''_''' + subregion1 + r'''.eps} 
-\noindent\includegraphics[scale=''' + scale + r''', trim=''' + trim2b + r''', clip=true]{''' + pathoutputfig + r'''/''' + target + r'''_''' + opeevents + r'''-''' + criteria + r'''-area_map_''' + model + r'''_''' +
+\noindent\includegraphics[scale=''' + scale + r''', trim=''' + trim2b + r''', clip=true]{''' + pathoutputfig + r'''/''' + target + r'''_''' + opeevents + r'''-''' + properties+ r'''-area_map_''' + model + r'''_''' +
                        region2_year[3] + r'''-''' + season + r'''_''' + subregion2 + r'''.eps} 
-\noindent\includegraphics[scale=''' + scale + r''', trim=''' + trim3b + r''', clip=true]{''' + pathoutputfig + r'''/''' + target + r'''_''' + opeevents + r'''-''' + criteria + r'''-area_map_''' + model + r'''_''' +
+\noindent\includegraphics[scale=''' + scale + r''', trim=''' + trim3b + r''', clip=true]{''' + pathoutputfig + r'''/''' + target + r'''_''' + opeevents + r'''-''' + properties+ r'''-area_map_''' + model + r'''_''' +
                        region3_year[3] + r'''-''' + season + r'''_''' + subregion3 + r'''.eps} 
 %
-\noindent\includegraphics[scale=''' + scale + r''', trim=''' + trim1c + r''', clip=true]{''' + pathoutputfig + r'''/''' + target + r'''_''' + opeevents + r'''-''' + criteria + r'''-area_map_''' + model + r'''_''' +
+\noindent\includegraphics[scale=''' + scale + r''', trim=''' + trim1c + r''', clip=true]{''' + pathoutputfig + r'''/''' + target + r'''_''' + opeevents + r'''-''' + properties+ r'''-area_map_''' + model + r'''_''' +
                        region1_year[4] + r'''-''' + season + r'''_''' + subregion1 + r'''.eps} 
-\noindent\includegraphics[scale=''' + scale + r''', trim=''' + trim2c + r''', clip=true]{''' + pathoutputfig + r'''/''' + target + r'''_''' + opeevents + r'''-''' + criteria + r'''-area_map_''' + model + r'''_''' +
+\noindent\includegraphics[scale=''' + scale + r''', trim=''' + trim2c + r''', clip=true]{''' + pathoutputfig + r'''/''' + target + r'''_''' + opeevents + r'''-''' + properties+ r'''-area_map_''' + model + r'''_''' +
                        region2_year[4] + r'''-''' + season + r'''_''' + subregion2 + r'''.eps} 
-\noindent\includegraphics[scale=''' + scale + r''', trim=''' + trim3c + r''', clip=true]{''' + pathoutputfig + r'''/''' + target + r'''_''' + opeevents + r'''-''' + criteria + r'''-area_map_''' + model + r'''_''' +
+\noindent\includegraphics[scale=''' + scale + r''', trim=''' + trim3c + r''', clip=true]{''' + pathoutputfig + r'''/''' + target + r'''_''' + opeevents + r'''-''' + properties+ r'''-area_map_''' + model + r'''_''' +
                        region3_year[4] + r'''-''' + season + r'''_''' + subregion3 + r'''.eps} 
  \end{center}
 \end{figure}
@@ -527,7 +533,7 @@ eod''')
                   + season + "_" \
                   + subregion + "- 3_" \
                   + opeevents \
-                  + "_" + criteria \
+                  + "_" + properties\
                   + "_area_" + yearbegclim + yearendclim + dayendfilename \
                   + "_v8.pdf"
 
@@ -538,21 +544,21 @@ eod''')
 
         region1_year = []
         with open(
-                pathdata + "/MHW/TXT.RANK/rank.rank." + model + "." + target + "." + season + "." + resolution + "." + subregion1 + "." + opeevents + "." + criteria + ".area.txt") as f:
+                pathdata + "/MHW/TXT.RANK/rank.rank." + model + "." + target + "." + season + "." + resolution + "." + subregion1 + "." + opeevents + "." + properties+ ".area.txt") as f:
             for line in f:
                 print(f'', line.strip())
                 region1_year.append(line.strip())
 
         region2_year = []
         with open(
-                pathdata + "/MHW/TXT.RANK/rank.rank." + model + "." + target + "." + season + "." + resolution + "." + subregion2 + "." + opeevents + "." + criteria + ".area.txt") as f:
+                pathdata + "/MHW/TXT.RANK/rank.rank." + model + "." + target + "." + season + "." + resolution + "." + subregion2 + "." + opeevents + "." + properties+ ".area.txt") as f:
             for line in f:
                 print(f'', line.strip())
                 region2_year.append(line.strip())
 
         region3_year = []
         with open(
-                pathdata + "/MHW/TXT.RANK/rank.rank." + model + "." + target + "." + season + "." + resolution + "." + subregion3 + "." + opeevents + "." + criteria + ".area.txt") as f:
+                pathdata + "/MHW/TXT.RANK/rank.rank." + model + "." + target + "." + season + "." + resolution + "." + subregion3 + "." + opeevents + "." + properties+ ".area.txt") as f:
             for line in f:
                 print(f'', line.strip())
                 region3_year.append(line.strip())
@@ -611,25 +617,25 @@ eod
 \newpage 
 \begin{figure}[p]
  \begin{center}
-\noindent\includegraphics[scale=''' + scale + r''', trim=''' + trim1a + r''', clip=true]{''' + pathoutputfig + r'''/''' + target + r'''_''' + opeevents + r'''-''' + criteria + r'''-area_map_''' + model + r'''_''' +
+\noindent\includegraphics[scale=''' + scale + r''', trim=''' + trim1a + r''', clip=true]{''' + pathoutputfig + r'''/''' + target + r'''_''' + opeevents + r'''-''' + properties+ r'''-area_map_''' + model + r'''_''' +
                        region1_year[0] + r'''-''' + season + r'''_''' + subregion1 + r'''.eps} 
-\noindent\includegraphics[scale=''' + scale + r''', trim=''' + trim2a + r''', clip=true]{''' + pathoutputfig + r'''/''' + target + r'''_''' + opeevents + r'''-''' + criteria + r'''-area_map_''' + model + r'''_''' +
+\noindent\includegraphics[scale=''' + scale + r''', trim=''' + trim2a + r''', clip=true]{''' + pathoutputfig + r'''/''' + target + r'''_''' + opeevents + r'''-''' + properties+ r'''-area_map_''' + model + r'''_''' +
                        region2_year[0] + r'''-''' + season + r'''_''' + subregion2 + r'''.eps} 
-\noindent\includegraphics[scale=''' + scale + r''', trim=''' + trim3a + r''', clip=true]{''' + pathoutputfig + r'''/''' + target + r'''_''' + opeevents + r'''-''' + criteria + r'''-area_map_''' + model + r'''_''' +
+\noindent\includegraphics[scale=''' + scale + r''', trim=''' + trim3a + r''', clip=true]{''' + pathoutputfig + r'''/''' + target + r'''_''' + opeevents + r'''-''' + properties+ r'''-area_map_''' + model + r'''_''' +
                        region3_year[0] + r'''-''' + season + r'''_''' + subregion3 + r'''.eps} 
 %
-\noindent\includegraphics[scale=''' + scale + r''', trim=''' + trim1b + r''', clip=true]{''' + pathoutputfig + r'''/''' + target + r'''_''' + opeevents + r'''-''' + criteria + r'''-area_map_''' + model + r'''_''' +
+\noindent\includegraphics[scale=''' + scale + r''', trim=''' + trim1b + r''', clip=true]{''' + pathoutputfig + r'''/''' + target + r'''_''' + opeevents + r'''-''' + properties+ r'''-area_map_''' + model + r'''_''' +
                        region1_year[1] + r'''-''' + season + r'''_''' + subregion1 + r'''.eps} 
-\noindent\includegraphics[scale=''' + scale + r''', trim=''' + trim2b + r''', clip=true]{''' + pathoutputfig + r'''/''' + target + r'''_''' + opeevents + r'''-''' + criteria + r'''-area_map_''' + model + r'''_''' +
+\noindent\includegraphics[scale=''' + scale + r''', trim=''' + trim2b + r''', clip=true]{''' + pathoutputfig + r'''/''' + target + r'''_''' + opeevents + r'''-''' + properties+ r'''-area_map_''' + model + r'''_''' +
                        region2_year[1] + r'''-''' + season + r'''_''' + subregion2 + r'''.eps} 
-\noindent\includegraphics[scale=''' + scale + r''', trim=''' + trim3b + r''', clip=true]{''' + pathoutputfig + r'''/''' + target + r'''_''' + opeevents + r'''-''' + criteria + r'''-area_map_''' + model + r'''_''' +
+\noindent\includegraphics[scale=''' + scale + r''', trim=''' + trim3b + r''', clip=true]{''' + pathoutputfig + r'''/''' + target + r'''_''' + opeevents + r'''-''' + properties+ r'''-area_map_''' + model + r'''_''' +
                        region3_year[1] + r'''-''' + season + r'''_''' + subregion3 + r'''.eps} 
 %
-\noindent\includegraphics[scale=''' + scale + r''', trim=''' + trim1c + r''', clip=true]{''' + pathoutputfig + r'''/''' + target + r'''_''' + opeevents + r'''-''' + criteria + r'''-area_map_''' + model + r'''_''' +
+\noindent\includegraphics[scale=''' + scale + r''', trim=''' + trim1c + r''', clip=true]{''' + pathoutputfig + r'''/''' + target + r'''_''' + opeevents + r'''-''' + properties+ r'''-area_map_''' + model + r'''_''' +
                        region1_year[2] + r'''-''' + season + r'''_''' + subregion1 + r'''.eps} 
-\noindent\includegraphics[scale=''' + scale + r''', trim=''' + trim2c + r''', clip=true]{''' + pathoutputfig + r'''/''' + target + r'''_''' + opeevents + r'''-''' + criteria + r'''-area_map_''' + model + r'''_''' +
+\noindent\includegraphics[scale=''' + scale + r''', trim=''' + trim2c + r''', clip=true]{''' + pathoutputfig + r'''/''' + target + r'''_''' + opeevents + r'''-''' + properties+ r'''-area_map_''' + model + r'''_''' +
                        region2_year[2] + r'''-''' + season + r'''_''' + subregion2 + r'''.eps} 
-\noindent\includegraphics[scale=''' + scale + r''', trim=''' + trim3c + r''', clip=true]{''' + pathoutputfig + r'''/''' + target + r'''_''' + opeevents + r'''-''' + criteria + r'''-area_map_''' + model + r'''_''' +
+\noindent\includegraphics[scale=''' + scale + r''', trim=''' + trim3c + r''', clip=true]{''' + pathoutputfig + r'''/''' + target + r'''_''' + opeevents + r'''-''' + properties+ r'''-area_map_''' + model + r'''_''' +
                        region3_year[2] + r'''-''' + season + r'''_''' + subregion3 + r'''.eps} 
  \end{center}
 \end{figure}
@@ -652,10 +658,10 @@ eod'''
         model = "oisst"
         subregion = "MedE2"
 
-        fileout = pathoutputlatex + "/rank_top3year_" + model + "_" + target + "_" + season + "_" + subregion + "_" + opeevents + "_" + criteria + "_area_" + yearbegclim + yearendclim + dayendfilename + "_v8.pdf"
+        fileout = pathoutputlatex + "/rank_top3year_" + model + "_" + target + "_" + season + "_" + subregion + "_" + opeevents + "_" + properties+ "_area_" + yearbegclim + yearendclim + dayendfilename + "_v8.pdf"
         region_year = []
         with open(
-                pathdata + "/MHW/TXT.RANK/rank." + model + target + "." + season + "." + resolution + subregion + opeevents + criteria + ".area.txt") as f:
+                pathdata + "/MHW/TXT.RANK/rank." + model + target + "." + season + "." + resolution + subregion + opeevents + properties+ ".area.txt") as f:
             for line in f:
                 print(f'', line.strip())
                 region_year.append(line.strip())
@@ -758,11 +764,11 @@ eod
 \newpage 
 \begin{figure}[p]
  \begin{center}
-\noindent\includegraphics[scale=''' + scale + r''', trim=''' + trim1 + r''', clip=true]{''' + pathoutputfig + r'''/''' + target + r'''_''' + opeevents + r'''-''' + criteria + r'''-area_map_''' + model + r'''_''' +
+\noindent\includegraphics[scale=''' + scale + r''', trim=''' + trim1 + r''', clip=true]{''' + pathoutputfig + r'''/''' + target + r'''_''' + opeevents + r'''-''' + properties+ r'''-area_map_''' + model + r'''_''' +
                        region_year[0] + r'''-''' + season + r'''_''' + subregion + r'''.eps} 
-\noindent\includegraphics[scale=''' + scale + r''', trim=''' + trim2 + r''', clip=true]{''' + pathoutputfig + r'''/''' + target + r'''_''' + opeevents + r'''-''' + criteria + r'''-area_map_''' + model + r'''_''' +
+\noindent\includegraphics[scale=''' + scale + r''', trim=''' + trim2 + r''', clip=true]{''' + pathoutputfig + r'''/''' + target + r'''_''' + opeevents + r'''-''' + properties+ r'''-area_map_''' + model + r'''_''' +
                        region_year[1] + r'''-''' + season + r'''_''' + subregion + r'''.eps} 
-\noindent\includegraphics[scale=''' + scale + r''', trim=''' + trim3 + r''', clip=true]{''' + pathoutputfig + r'''/''' + target + r'''_''' + opeevents + r'''-''' + criteria + r'''-area_map_''' + model + r'''_''' +
+\noindent\includegraphics[scale=''' + scale + r''', trim=''' + trim3 + r''', clip=true]{''' + pathoutputfig + r'''/''' + target + r'''_''' + opeevents + r'''-''' + properties+ r'''-area_map_''' + model + r'''_''' +
                        region_year[2] + r'''-''' + season + r'''_''' + subregion + r'''.eps} 
  \end{center}
 \end{figure}
@@ -782,13 +788,13 @@ eod'''
 
         model = "oisst"
         subregion = "MedE2"
-        fileout = pathoutputlatex + "/rank_top4-9year_" + target + "_" + season + "_" + subregion + "_" + opeevents + "_" + criteria + "_area_" + yearbegclim + yearendclim + dayendfilename + "_v8.pdf"
+        fileout = pathoutputlatex + "/rank_top4-9year_" + target + "_" + season + "_" + subregion + "_" + opeevents + "_" + properties+ "_area_" + yearbegclim + yearendclim + dayendfilename + "_v8.pdf"
         print(
-            f'{pathdata + "/MHW/TXT.RANK/rank." + model + "." + target + "." + season + "." + resolution + "." + subregion + "." + opeevents + "." + criteria + ".area.txt"}')
+            f'{pathdata + "/MHW/TXT.RANK/rank." + model + "." + target + "." + season + "." + resolution + "." + subregion + "." + opeevents + "." + properties+ ".area.txt"}')
 
         region_year = []
         with open(
-                pathdata + "/MHW/TXT.RANK/rank" + model + "." + target + "." + season + "." + resolution + "." + subregion + "." + opeevents + "." + criteria + "." + ".area.txt") as f:
+                pathdata + "/MHW/TXT.RANK/rank" + model + "." + target + "." + season + "." + resolution + "." + subregion + "." + opeevents + "." + properties+ "." + ".area.txt") as f:
             for line in f:
                 print(f'', line.strip())
                 region_year.append(line.strip())
@@ -891,17 +897,17 @@ eod
 \newpage 
 \begin{figure}[p]
  \begin{center}
-\noindent\includegraphics[scale=''' + scale + r''', trim=''' + trim1a + r''', clip=true]{''' + pathoutputfig + r'''/''' + target + r'''_''' + opeevents + r'''-''' + criteria + r'''-area_map_''' + model + r'''_''' +
+\noindent\includegraphics[scale=''' + scale + r''', trim=''' + trim1a + r''', clip=true]{''' + pathoutputfig + r'''/''' + target + r'''_''' + opeevents + r'''-''' + properties+ r'''-area_map_''' + model + r'''_''' +
                        region_year[3] + r'''-''' + season + r'''_''' + subregion + r'''.eps} 
-\noindent\includegraphics[scale=''' + scale + r''', trim=''' + trim2a + r''', clip=true]{''' + pathoutputfig + r'''/''' + target + r'''_''' + opeevents + r'''-''' + criteria + r'''-area_map_''' + model + r'''_''' +
+\noindent\includegraphics[scale=''' + scale + r''', trim=''' + trim2a + r''', clip=true]{''' + pathoutputfig + r'''/''' + target + r'''_''' + opeevents + r'''-''' + properties+ r'''-area_map_''' + model + r'''_''' +
                        region_year[4] + r'''-''' + season + r'''_''' + subregion + r'''.eps} 
-\noindent\includegraphics[scale=''' + scale + r''', trim=''' + trim3a + r''', clip=true]{''' + pathoutputfig + r'''/''' + target + r'''_''' + opeevents + r'''-''' + criteria + r'''-area_map_''' + model + r'''_''' +
+\noindent\includegraphics[scale=''' + scale + r''', trim=''' + trim3a + r''', clip=true]{''' + pathoutputfig + r'''/''' + target + r'''_''' + opeevents + r'''-''' + properties+ r'''-area_map_''' + model + r'''_''' +
                        region_year[5] + r'''-''' + season + r'''_''' + subregion + r'''.eps} 
-\noindent\includegraphics[scale=''' + scale + r''', trim=''' + trim1b + r''', clip=true]{''' + pathoutputfig + r'''/''' + target + r'''_''' + opeevents + r'''-''' + criteria + r'''-area_map_''' + model + r'''_''' +
+\noindent\includegraphics[scale=''' + scale + r''', trim=''' + trim1b + r''', clip=true]{''' + pathoutputfig + r'''/''' + target + r'''_''' + opeevents + r'''-''' + properties+ r'''-area_map_''' + model + r'''_''' +
                        region_year[6] + r'''-''' + season + r'''_''' + subregion + r'''.eps} 
-\noindent\includegraphics[scale=''' + scale + r''', trim=''' + trim2b + r''', clip=true]{''' + pathoutputfig + r'''/''' + target + r'''_''' + opeevents + r'''-''' + criteria + r'''-area_map_''' + model + r'''_''' +
+\noindent\includegraphics[scale=''' + scale + r''', trim=''' + trim2b + r''', clip=true]{''' + pathoutputfig + r'''/''' + target + r'''_''' + opeevents + r'''-''' + properties+ r'''-area_map_''' + model + r'''_''' +
                        region_year[7] + r'''-''' + season + r'''_''' + subregion + r'''.eps} 
-\noindent\includegraphics[scale=''' + scale + r''', trim=''' + trim3b + r''', clip=true]{''' + pathoutputfig + r'''/''' + target + r'''_''' + opeevents + r'''-''' + criteria + r'''-area_map_''' + model + r'''_''' +
+\noindent\includegraphics[scale=''' + scale + r''', trim=''' + trim3b + r''', clip=true]{''' + pathoutputfig + r'''/''' + target + r'''_''' + opeevents + r'''-''' + properties+ r'''-area_map_''' + model + r'''_''' +
                        region_year[8] + r'''-''' + season + r'''_''' + subregion + r'''.eps} 
  \end{center}
 \end{figure}
@@ -931,7 +937,7 @@ eod'''
         properties3 = "intensity_mean"
         rank_year = []
         with open(
-                pathdata + "/MHW/TXT.RANK/rank." + model + "." + target + "." + season + "." + resolution + "." + subregion + "." + opeevents + "." + criteria + "." + ".area.txt") as f:
+                pathdata + "/MHW/TXT.RANK/rank." + model + "." + target + "." + season + "." + resolution + "." + subregion + "." + opeevents + "." + properties+ "." + ".area.txt") as f:
             for line in f:
                 print(f'', line.strip())
                 rank_year.append(line.strip())
