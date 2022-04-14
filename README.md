@@ -5,8 +5,8 @@ The methodology to evaluate marine temperature extreme events physical importanc
 (ii) calculation of the activity metric for each year and for each grid point location of the domain, 
 (iii) ranking according to the total activity (sum of activity of each grid point over the domain). 
 
-It includes two python scripts. A script that loops over any domain the detection script of Hobday et al. (2016) (step (i)) 
-and a script that calculates the activity and ranks the year according to the total activity (step (ii) and step (iii) of the protocol of this study). 
+It includes two python scripts. A script that loops over any domain the detection script of Hobday et al. (2016) (step (i), called mee_detect_step1.py) 
+and a script that calculates the activity and ranks the year according to the total activity (step (ii) and step (iii) of the protocol of this study, called mee_activity_rank_step2-3.py). 
 
 More information can be found in:
 Simon A., Plecha S.M., Russo A., Teles-Machado A., Donat M., P-A Auger , Trigo R.M., 
